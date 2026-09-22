@@ -1,0 +1,11 @@
+Account Policy
+
+Customers can update their registered address through the account
+settings.
+
+Address changes may require identity verification.
+
+Customers can view their recent transactions through the banking
+application.
+
+Account statements are available for the previous 24 months.

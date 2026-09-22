@@ -1,0 +1,11 @@
+Credit Card Policy
+
+Customers are eligible for a maximum credit limit based on their
+account profile and credit assessment.
+
+The minimum payment is calculated based on the outstanding balance.
+
+Customers can request a credit limit increase after six months
+of account history.
+
+Credit card payments are due on the statement due date.
