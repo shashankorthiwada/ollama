@@ -16,13 +16,17 @@ public class ChatController {
     private final BankingTools bankingTools;
     private final ObjectMapper objectMapper;
     private final DocumentService documentService;
+    private final EmbeddingClient embeddingClient;
+    private final VectorSimilarity vectorSimilarity;
 
-    public ChatController(OllamaClient ollamaClient, BankingTools bankingTools, ObjectMapper objectMapper, DocumentService documentService) {
+    public ChatController(OllamaClient ollamaClient, BankingTools bankingTools, ObjectMapper objectMapper, DocumentService documentService, EmbeddingClient embeddingClient, VectorSimilarity vectorSimilarity) {
 
         this.ollamaClient = ollamaClient;
         this.bankingTools = bankingTools;
         this.objectMapper = objectMapper;
         this.documentService = documentService;
+        this.embeddingClient = embeddingClient;
+        this.vectorSimilarity = vectorSimilarity;
     }
 
 //    @GetMapping("/tool")
@@ -204,7 +208,27 @@ public class ChatController {
 
         return ollamaClient.ask(prompt);
     }
-//    private String executeTool(ToolCall toolCall) {
+
+
+    @GetMapping("/embedding")
+    public Map<String, Object> embedding(@RequestParam String text) {
+
+        List<Double> vector = embeddingClient.embed(text);
+
+        return Map.of("text", text, "dimensions", vector.size(), "first10Values", vector.subList(0, 10));
+    }
+
+    @GetMapping("/similarity")
+    public Map<String, Object> similarity(@RequestParam String text1, @RequestParam String text2) {
+
+        List<Double> vector1 = embeddingClient.embed(text1);
+        List<Double> vector2 = embeddingClient.embed(text2);
+
+        double similarity = vectorSimilarity.cosineSimilarity(vector1, vector2);
+
+        return Map.of("text1", text1, "text2", text2, "similarity", similarity);
+    }
+    //    private String executeTool(ToolCall toolCall) {
 //
 //        return switch (toolCall.getTool()) {
 //
