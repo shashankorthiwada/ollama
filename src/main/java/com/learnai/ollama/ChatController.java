@@ -18,8 +18,9 @@ public class ChatController {
     private final DocumentService documentService;
     private final EmbeddingClient embeddingClient;
     private final VectorSimilarity vectorSimilarity;
+    private final RagRetrievalService ragRetrievalService;
 
-    public ChatController(OllamaClient ollamaClient, BankingTools bankingTools, ObjectMapper objectMapper, DocumentService documentService, EmbeddingClient embeddingClient, VectorSimilarity vectorSimilarity) {
+    public ChatController(OllamaClient ollamaClient, BankingTools bankingTools, ObjectMapper objectMapper, DocumentService documentService, EmbeddingClient embeddingClient, VectorSimilarity vectorSimilarity, RagRetrievalService ragRetrievalService) {
 
         this.ollamaClient = ollamaClient;
         this.bankingTools = bankingTools;
@@ -27,6 +28,7 @@ public class ChatController {
         this.documentService = documentService;
         this.embeddingClient = embeddingClient;
         this.vectorSimilarity = vectorSimilarity;
+        this.ragRetrievalService = ragRetrievalService;
     }
 
 //    @GetMapping("/tool")
@@ -176,38 +178,38 @@ public class ChatController {
         };
     }
 
-    @GetMapping("/rag")
-    public String rag(@RequestParam String message) {
-
-        String document;
-
-        try {
-
-            document = documentService.getRefundPolicy();
-
-        } catch (IOException e) {
-
-            return "Unable to read document.";
-        }
-
-        String prompt = """
-                You are a banking assistant.
-                
-                Answer the user's question using ONLY the
-                information contained in the following document.
-                
-                DOCUMENT:
-                %s
-                
-                USER QUESTION:
-                %s
-                
-                If the document does not contain the answer,
-                say that the information is not available.
-                """.formatted(document, message);
-
-        return ollamaClient.ask(prompt);
-    }
+//    @GetMapping("/rag")
+//    public String rag(@RequestParam String message) {
+//
+//        String document;
+//
+//        try {
+//
+//            document = documentService.getRefundPolicy();
+//
+//        } catch (IOException e) {
+//
+//            return "Unable to read document.";
+//        }
+//
+//        String prompt = """
+//                You are a banking assistant.
+//
+//                Answer the user's question using ONLY the
+//                information contained in the following document.
+//
+//                DOCUMENT:
+//                %s
+//
+//                USER QUESTION:
+//                %s
+//
+//                If the document does not contain the answer,
+//                say that the information is not available.
+//                """.formatted(document, message);
+//
+//        return ollamaClient.ask(prompt);
+//    }
 
 
     @GetMapping("/embedding")
@@ -227,6 +229,12 @@ public class ChatController {
         double similarity = vectorSimilarity.cosineSimilarity(vector1, vector2);
 
         return Map.of("text1", text1, "text2", text2, "similarity", similarity);
+    }
+
+    @GetMapping("/rag/retrieve")
+    public List<DocumentChunk> retrieve(@RequestParam String message) {
+
+        return ragRetrievalService.retrieve(message, 1);
     }
     //    private String executeTool(ToolCall toolCall) {
 //
