@@ -19,8 +19,9 @@ public class ChatController {
     private final EmbeddingClient embeddingClient;
     private final VectorSimilarity vectorSimilarity;
     private final RagRetrievalService ragRetrievalService;
+    private final VectorStore vectorStore;
 
-    public ChatController(OllamaClient ollamaClient, BankingTools bankingTools, ObjectMapper objectMapper, DocumentService documentService, EmbeddingClient embeddingClient, VectorSimilarity vectorSimilarity, RagRetrievalService ragRetrievalService) {
+    public ChatController(OllamaClient ollamaClient, BankingTools bankingTools, ObjectMapper objectMapper, DocumentService documentService, EmbeddingClient embeddingClient, VectorSimilarity vectorSimilarity, RagRetrievalService ragRetrievalService, VectorStore vectorStore) {
 
         this.ollamaClient = ollamaClient;
         this.bankingTools = bankingTools;
@@ -29,6 +30,7 @@ public class ChatController {
         this.embeddingClient = embeddingClient;
         this.vectorSimilarity = vectorSimilarity;
         this.ragRetrievalService = ragRetrievalService;
+        this.vectorStore = vectorStore;
     }
 
 //    @GetMapping("/tool")
@@ -235,6 +237,11 @@ public class ChatController {
     public List<DocumentChunk> retrieve(@RequestParam String message) {
 
         return ragRetrievalService.retrieve(message, 1);
+    }
+
+    @GetMapping("/rag/documents")
+    public List<DocumentChunk> documents() {
+        return vectorStore.getDocuments();
     }
     //    private String executeTool(ToolCall toolCall) {
 //
