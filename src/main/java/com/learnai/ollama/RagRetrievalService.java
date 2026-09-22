@@ -19,7 +19,7 @@ public class RagRetrievalService {
         this.vectorSimilarity = vectorSimilarity;
     }
 
-    public List<DocumentChunk> retrieve(String question, int topK) {
+    public List<RetrievalResult> retrieve(String question, int topK) {
 
         List<Double> questionEmbedding = embeddingClient.embed(question);
 
@@ -27,8 +27,8 @@ public class RagRetrievalService {
 
             double similarity = vectorSimilarity.cosineSimilarity(questionEmbedding, document.embedding());
 
-            return new ScoredDocument(document, similarity);
-        }).sorted(Comparator.comparingDouble(ScoredDocument::score).reversed()).limit(topK).map(ScoredDocument::document).toList();
+            return new RetrievalResult(document, similarity);
+        }).sorted(Comparator.comparingDouble(RetrievalResult::score).reversed()).limit(topK).toList();
     }
 
     private record ScoredDocument(DocumentChunk document, double score) {

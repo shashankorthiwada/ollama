@@ -20,8 +20,9 @@ public class ChatController {
     private final VectorSimilarity vectorSimilarity;
     private final RagRetrievalService ragRetrievalService;
     private final VectorStore vectorStore;
+    private final RagAnswerService ragAnswerService;
 
-    public ChatController(OllamaClient ollamaClient, BankingTools bankingTools, ObjectMapper objectMapper, DocumentService documentService, EmbeddingClient embeddingClient, VectorSimilarity vectorSimilarity, RagRetrievalService ragRetrievalService, VectorStore vectorStore) {
+    public ChatController(OllamaClient ollamaClient, BankingTools bankingTools, ObjectMapper objectMapper, DocumentService documentService, EmbeddingClient embeddingClient, VectorSimilarity vectorSimilarity, RagRetrievalService ragRetrievalService, VectorStore vectorStore, RagAnswerService ragAnswerService) {
 
         this.ollamaClient = ollamaClient;
         this.bankingTools = bankingTools;
@@ -31,6 +32,7 @@ public class ChatController {
         this.vectorSimilarity = vectorSimilarity;
         this.ragRetrievalService = ragRetrievalService;
         this.vectorStore = vectorStore;
+        this.ragAnswerService = ragAnswerService;
     }
 
 //    @GetMapping("/tool")
@@ -234,14 +236,20 @@ public class ChatController {
     }
 
     @GetMapping("/rag/retrieve")
-    public List<DocumentChunk> retrieve(@RequestParam String message) {
+    public List<RetrievalResult> retrieve(@RequestParam String message) {
 
-        return ragRetrievalService.retrieve(message, 1);
+        return ragRetrievalService.retrieve(message, 3);
     }
 
     @GetMapping("/rag/documents")
     public List<DocumentChunk> documents() {
         return vectorStore.getDocuments();
+    }
+
+    @GetMapping("/rag/answer")
+    public String ragAnswer(@RequestParam String message) {
+
+        return ragAnswerService.answer(message);
     }
     //    private String executeTool(ToolCall toolCall) {
 //
