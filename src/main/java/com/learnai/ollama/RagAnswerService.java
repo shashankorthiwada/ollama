@@ -23,9 +23,6 @@ public class RagAnswerService {
 
         String context = results.stream().map(result -> result.document().text()).collect(Collectors.joining("\n\n"));
 
-        System.out.println("========== RETRIEVED CONTEXT ==========");
-        System.out.println(context);
-        System.out.println("=======================================");
 
         String prompt = """
                 Answer the question using the banking policy information below.
@@ -39,9 +36,6 @@ public class RagAnswerService {
                 Give a direct and concise answer.
                 """.formatted(context, question);
 
-        System.out.println("========== PROMPT ==========");
-        System.out.println(prompt);
-        System.out.println("============================");
 
         return ollamaClient.ask(prompt);
     }

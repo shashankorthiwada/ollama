@@ -11,6 +11,7 @@ public class RagRetrievalService {
     private final EmbeddingClient embeddingClient;
     private final VectorStore vectorStore;
     private final VectorSimilarity vectorSimilarity;
+    private static final double SIMILARITY_THRESHOLD = 0.70;
 
     public RagRetrievalService(EmbeddingClient embeddingClient, VectorStore vectorStore, VectorSimilarity vectorSimilarity) {
 
@@ -28,7 +29,7 @@ public class RagRetrievalService {
             double similarity = vectorSimilarity.cosineSimilarity(questionEmbedding, document.embedding());
 
             return new RetrievalResult(document, similarity);
-        }).sorted(Comparator.comparingDouble(RetrievalResult::score).reversed()).limit(topK).toList();
+        }).filter(result -> result.score() >= SIMILARITY_THRESHOLD).sorted(Comparator.comparingDouble(RetrievalResult::score).reversed()).limit(topK).toList();
     }
 
     private record ScoredDocument(DocumentChunk document, double score) {

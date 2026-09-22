@@ -18,9 +18,6 @@ public class OllamaClient {
 
         Map<?, ?> response = client.post().uri("/api/generate").contentType(MediaType.APPLICATION_JSON).body(request).retrieve().body(Map.class);
 
-        System.out.println("========== OLLAMA RESPONSE ==========");
-        System.out.println(response);
-        System.out.println("======================================");
 
         return response.get("response").toString();
     }
